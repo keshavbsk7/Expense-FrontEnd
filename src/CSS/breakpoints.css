@@ -1,0 +1,23 @@
+/* ==============================
+   RESPONSIVE BREAKPOINT SYSTEM
+   Mobile First
+   ============================== */
+
+/* Default: Mobile (0 – 575px) */
+/* No media query needed */
+
+/* Small Tablets / Large Phones */
+@media (min-width: 576px) {
+}
+
+/* Tablets */
+@media (min-width: 768px) {
+}
+
+/* Laptops */
+@media (min-width: 992px) {
+}
+
+/* Desktops */
+@media (min-width: 1200px) {
+}
