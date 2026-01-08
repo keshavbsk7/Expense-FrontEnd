@@ -1,0 +1,351 @@
+/* ===============================
+   PAGE CONTAINER
+================================ */
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 24px 24px 30px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* ===============================
+   DELETE ICON (CLEAN & SMALL)
+================================ */
+.delete-icon-btn {
+  position: absolute;
+  top: 52px;              /* aligns with header row */
+  left: 22px;             /* near checkbox column */
+
+  width: 34px;
+  height: 34px;
+  border-radius: 30%;
+
+ background-color: #f70313bb;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  cursor: pointer;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1500;
+
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.delete-icon-btn:hover {
+  background: #d9363e;
+  transform: scale(1.1);
+}
+/* ===============================
+   TABLE WRAPPER
+================================ */
+.table-wrapper {
+  max-height: 450px;
+  overflow-y: visible;
+  border-radius: 12px;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+/* ===============================
+   TABLE HEADER (REFERENCE STYLE)
+================================ */
+.expense-table thead th {
+  background: #6f7fe0;
+  color: white;
+  padding: 16px 14px;
+  font-weight: 600;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.expense-table thead th:first-child {
+  width: 45px;
+  text-align: center;
+}
+
+/* ===============================
+   TABLE BODY
+================================ */
+.expense-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+/* Zebra striping */
+.expense-table tbody tr:nth-child(even) {
+  background: #f7f8ff;
+}
+
+.expense-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.expense-table tbody tr:hover {
+  background: #eef1ff;
+}
+
+.expense-table tbody td {
+  padding: 16px 14px;
+  font-size: 14px;
+  color: #4a4a4a;
+  border: none;
+}
+
+/* ===============================
+   SELECTED ROW
+================================ */
+.expense-table tbody tr:has(input[type="checkbox"]:checked) {
+  background: #e6ebff !important;
+}
+
+/* ===============================
+   CHECKBOX
+================================ */
+.expense-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ===============================
+   AMOUNT COLUMN
+================================ */
+.expense-table tbody td:nth-child(2) {
+  font-weight: 600;
+  color: #3b5bdb;
+}
+
+/* ===============================
+   CATEGORY DROPDOWN
+================================ */
+.category-header {
+  position: relative;
+}
+
+.category-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+
+  width: 220px;
+  max-height: 260px;
+  overflow-y: auto;
+
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+}
+
+.category-search {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #eef1ff;
+}
+
+/* ===============================
+   POPUP
+================================ */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.popup-box {
+  background: white;
+  width: 360px;
+  padding: 25px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.popup-cancel {
+  background: #e0e0e0;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.popup-delete {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===============================
+   SCROLLBAR (OPTIONAL)
+================================ */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* ===============================
+   COLUMN WIDTH CONTROL
+================================ */
+
+/* Checkbox */
+.expense-table th:first-child,
+.expense-table td:first-child {
+  width: 50px;
+  text-align: center;
+}
+
+/* Amount */
+.expense-table th:nth-child(2),
+.expense-table td:nth-child(2) {
+  width: 120px;
+  white-space: nowrap;
+}
+
+/* Date */
+.expense-table th:nth-child(3),
+.expense-table td:nth-child(3) {
+  width: 140px;
+  white-space: nowrap;
+}
+
+/* Category */
+.expense-table th:nth-child(4),
+.expense-table td:nth-child(4) {
+  width: 140px;
+  white-space: nowrap;
+}
+
+/* Description (EXPAND THIS) */
+.expense-table th:nth-child(5),
+.expense-table td:nth-child(5) {
+  width: auto;            /* takes remaining space */
+}
+.date-filter {
+  padding: 12px;
+  border-radius: 10px;
+  background: #f7f8ff;
+  max-width: 260px;
+}
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.tree-children {
+  margin-left: 18px;
+}
+
+.tree-leaf {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Anchor for date dropdown */
+.date-header {
+  position: relative;
+  overflow: visible;
+}
+
+/* Clickable text */
+.date-trigger {
+cursor: pointer;}
+
+/* Proper dropdown positioning */
+.date-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);   /* below header */
+  left: 0;
+
+  width: 260px;
+  max-height: 300px;
+  overflow-y: auto;
+
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  z-index: 9999;
+}
+
+.date-dropdown-portal {
+ position: fixed;  
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  z-index: 10000;
+}/* Reduce checkbox size inside date dropdown */
+.date-dropdown-portal input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  transform: scale(0.85);
+  cursor: pointer;
+}
