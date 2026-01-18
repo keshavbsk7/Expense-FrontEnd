@@ -19,12 +19,19 @@ const [newPassword, setNewPassword] = useState("");
 const [sendingOtp, setSendingOtp] = useState(false);
 const [infoMessage, setInfoMessage] = useState("");
 const [showToast, setShowToast] = useState(false);
+const [shake, setShake] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
+const handleChange = (e) => {
+  setUser({ ...user, [e.target.name]: e.target.value });
+
+  if (loginError) {
+    setLoginError("");
+  }
+  
+
+};
 
   if (localStorage.getItem("userId")) {
     return <Navigate to="/home" replace />;
@@ -84,11 +91,28 @@ const handleLogin = async (e) => {
       localStorage.setItem("name", data.name);
       setIsLoggedIn(true);
       navigate("/home", { replace: true });
-    } else {
-      setLoginError(data.message || "Invalid username or password");
-    }
+    } else
+  {
+    setLoginError(data.message || "Invalid username or password");
+  setShake(true);
+ setUser(prev => ({
+    ...prev,
+    password: ""
+  }));
+  setTimeout(() => {
+    setShake(false);
+  }, 400);
+  }
   } catch {
     setLoginError("Server error. Please try again.");
+  setShake(true);
+    setUser(prev => ({
+        ...prev,
+        password: ""
+      }));
+  setTimeout(() => {
+    setShake(false);
+  }, 400);
   } finally {
     setLoggingIn(false);
   }
@@ -220,7 +244,8 @@ const handleResetPassword = async () => {
 
       {/* RIGHT SIDE LOGIN CARD */}
       <div className="login-section">
-        <div className="login-box">
+        <div className={`login-box ${shake ? "shake" : ""}`}>
+
 
           {mode === "LOGIN" && (
             <>
@@ -235,6 +260,7 @@ const handleResetPassword = async () => {
                     placeholder="Username"
                     value={user.username}
                     onChange={handleChange}
+                   // className={loginError ? "input-error" : ""}
                     required
                   />
                 </div>
@@ -246,6 +272,7 @@ const handleResetPassword = async () => {
                     placeholder="Password"
                     value={user.password}
                     onChange={handleChange}
+                    className={loginError ? "input-error" : ""}
                     required
                   />
 
@@ -277,7 +304,11 @@ const handleResetPassword = async () => {
                     Forgot password?
                   </span>
                 </div>
-
+                {loginError && (
+                <div className="error-message">
+                  {loginError}
+                </div>
+              )}
                 <button
                 type="submit"
                 className="login-btn"

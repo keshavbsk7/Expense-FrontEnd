@@ -1,12 +1,13 @@
 import { useState } from "react";
 import "../CSS/ExpenseForm.css";
 
-function ExpenseForm() {
+function ExpenseForm({ onClose, onSuccess }) {
   const [expense, setExpense] = useState({
     amount: "",
     date: "",
     category: "",
-    description: ""
+    description: "",
+    transactionType: "debit"
   });
 
   const [saving, setSaving] = useState(false);
@@ -15,14 +16,33 @@ function ExpenseForm() {
 
   const userId = localStorage.getItem("userId");
 
-  const categories = [
+  const debitCategories = [
     "Food", "Travel", "Shopping", "Bills", "Health", "Education",
     "Groceries", "Entertainment", "Fuel", "Rent", "EMI / Loans", "Other"
   ];
+const creditCategories = [
+  "Salary",
+  "Business Income",
+  "Freelance / Consulting",
+  "Investment Returns",
+  "Refund / Cashback"
+];
+ const handleChange = (e) => {
+  const { name, value } = e.target;
 
-  const handleChange = (e) => {
-    setExpense({ ...expense, [e.target.name]: e.target.value });
-  };
+  if (name === "transactionType") {
+    setExpense(prev => ({
+      ...prev,
+      transactionType: value,
+      category: "" // reset category when type changes
+    }));
+  } else {
+    setExpense(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+};
 
   const submitExpense = async () => {
     if (!expense.amount || !expense.date || !expense.category) return;
@@ -41,15 +61,7 @@ function ExpenseForm() {
 
       if (!res.ok) throw new Error("Failed");
 
-      setSavedDetails(expense);
-      setShowPopup(true);
-
-      setExpense({
-        amount: "",
-        date: "",
-        category: "",
-        description: ""
-      });
+    onSuccess?.();
     } catch {
       // future: inline error message
     } finally {
@@ -71,6 +83,7 @@ function ExpenseForm() {
             placeholder="Enter amount"
             value={expense.amount}
             onChange={handleChange}
+            autoFocus
           />
         </div>
 
@@ -85,6 +98,19 @@ function ExpenseForm() {
           />
         </div>
 
+        {/* Transaction Type */}
+        <div className="field">
+          <label>Transaction Type</label>
+          <select
+            name="transactionType"
+            value={expense.transactionType}
+            onChange={handleChange}
+          >
+            <option value="debit">Debit (Expense)</option>
+            <option value="credit">Credit (Income)</option>
+          </select>
+        </div>
+
         {/* Category */}
         <div className="field">
           <label>Category</label>
@@ -94,7 +120,10 @@ function ExpenseForm() {
             onChange={handleChange}
           >
             <option value="">Select category</option>
-            {categories.map((cat, i) => (
+            {(expense.transactionType === "credit"
+              ? creditCategories
+              : debitCategories
+            ).map((cat, i) => (
               <option key={i} value={cat}>
                 {cat}
               </option>
@@ -113,53 +142,25 @@ function ExpenseForm() {
           />
         </div>
 
-        {/* Button */}
-        <button
-          className="primary-btn"
-          onClick={submitExpense}
-          disabled={saving}
-        >
-          {saving ? <span className="spinner"></span> : "Save Expense"}
-        </button>
-      </div>
+        {/* ACTION BUTTONS */}
+        <div className="form-actions">
+          <button
+            className="secondary-btn"
+            onClick={onClose}
+            type="button"
+          >
+            Cancel
+          </button>
 
-      {/* SUCCESS POPUP */}
-      {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup-box">
-            <svg
-              width="60"
-              height="60"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#2ecc71"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-
-            <h3>Expense Added</h3>
-
-            <p><strong>Amount:</strong> ₹ {savedDetails.amount}</p>
-            <p><strong>Date:</strong> {savedDetails.date}</p>
-            <p><strong>Category:</strong> {savedDetails.category}</p>
-            {savedDetails.description && (
-              <p><strong>Description:</strong> {savedDetails.description}</p>
-            )}
-
-            <button
-              className="primary-btn"
-              onClick={() => setShowPopup(false)}
-              style={{ marginTop: "15px" }}
-            >
-              Done
-            </button>
-          </div>
+          <button
+            className="primary-btn"
+            onClick={submitExpense}
+            disabled={saving}
+          >
+            {saving ? <span className="spinner"></span> : "Save Expense"}
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -120,6 +120,7 @@ function Home() {
   const [prediction, setPrediction] = useState(null);
   const [categoryTotals, setCategoryTotals] = useState([]);
   const [monthlyTrend, setMonthlyTrend] = useState([]);
+const [availableBalance, setAvailableBalance] = useState(0);
 
   const userId = localStorage.getItem("userId");
   const name = localStorage.getItem("name") || "User";
@@ -149,6 +150,9 @@ function Home() {
 
         const monthlyRes = await fetch(`https://expense-backend-rxqo.onrender.com/monthly-trend/${userId}`);
         setMonthlyTrend(await monthlyRes.json());
+        const balanceRes = await fetch(`https://expense-backend-rxqo.onrender.com/available-balance/${userId}`);
+       const balanceData = await balanceRes.json();
+      setAvailableBalance(balanceData.availableBalance || 0);
 
       } catch (err) {
         console.error("Dashboard error:", err);
@@ -203,7 +207,20 @@ function Home() {
             <div className="summary-value">₹<AnimatedNumber value={totalThisMonth} /></div>
           </div>
         </div>
-
+         <div className="summary-card">
+    <span className="summary-icon">💳</span>
+    <div>
+      <div>Available Balance</div>
+      <div
+        className="summary-value"
+        style={{
+          color: availableBalance < 0 ? "#e74c3c" : "#2ecc71"
+        }}
+      >
+        ₹<AnimatedNumber value={Math.abs(availableBalance)} />
+      </div>
+    </div>
+  </div>
         <div className="summary-card">
           <span className="summary-icon">🏆</span>
           <div>

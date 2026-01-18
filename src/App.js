@@ -7,6 +7,7 @@ import AddExpense from "./components/AddExpense";
 import ViewExpenses from "./components/ViewExpenses";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Profile from "./components/Profile";
 
 function App() {
 
@@ -41,6 +42,9 @@ function App() {
         <Route path="/add-expense" element={isLoggedIn ? <AddExpense /> : <Navigate to="/" />} />
 
         <Route path="/view-expenses" element={isLoggedIn ? <ViewExpenses /> : <Navigate to="/" />} />
+
+        <Route path="/profile" element={<Profile />} />
+
       </Routes>
     </>
   );
