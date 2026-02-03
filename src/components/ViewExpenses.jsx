@@ -86,14 +86,17 @@
     ================================ */
     useEffect(() => {
       const handler = (e) => {
-        if (
-          showDateFilter &&
-          dateDropdownRef.current &&
-          !dateDropdownRef.current.contains(e.target) &&
-          !dateTriggerRef.current.contains(e.target)
-        ) {
-          setShowDateFilter(false);
-        }
+       if (
+  showDateFilter &&
+  dateDropdownRef.current &&
+  !dateDropdownRef.current.contains(e.target) &&
+  !dateTriggerRef.current.contains(e.target)
+) {
+  // APPLY dates only when closing
+ 
+  setShowDateFilter(false);
+}
+
 
         if (
           showCategoryFilter &&
@@ -107,7 +110,10 @@
       document.addEventListener("mousedown", handler);
       return () => document.removeEventListener("mousedown", handler);
     }, [showDateFilter, showCategoryFilter]);
-
+const [fromDate, setFromDate] = useState("");
+const [toDate, setToDate] = useState("");
+const [draftFromDate, setDraftFromDate] = useState("");
+const [draftToDate, setDraftToDate] = useState("");
     /* ===============================
       FILTER LOGIC
     ================================ */
@@ -118,12 +124,22 @@
         data = data.filter(e => selectedCategories.includes(e.category));
       }
 
-      if (selectedDates.length > 0) {
-        data = data.filter(e => selectedDates.includes(e.date));
-      }
+        if (fromDate) {
+          const from = new Date(fromDate);
+          data = data.filter(e => new Date(e.date) >= from);
+        }
+
+        if (toDate) {
+          const to = new Date(toDate);
+          // include the full day
+          to.setHours(23, 59, 59, 999);
+          data = data.filter(e => new Date(e.date) <= to);
+        }
+
+
 
       setFilteredExpenses(data);
-    }, [selectedCategories, selectedDates, expenses]);
+    }, [selectedCategories, selectedDates, expenses,fromDate,toDate]);
 
     const toggleCategory = (cat) => {
       setSelectedCategories(prev =>
@@ -180,6 +196,16 @@
       setShowDeletePopup(false);
       fetchExpenses();
     };
+const selectAllCategories = () => {
+  setSelectedCategories(categories);
+};
+
+const clearAllCategories = () => {
+  setSelectedCategories([]);
+};
+const allCategoriesSelected =
+  selectedCategories.length === categories.length && categories.length > 0;
+
 
     /* ===============================
       DATE DROPDOWN OPEN
@@ -230,7 +256,9 @@
         )}
 
         <div className="table-wrapper">
-          <table className="expense-table">
+          <table className={`expense-table ${
+    filteredExpenses.length === 0 ? "expense-table-empty" : ""
+  }`}>
             <thead>
               <tr>
                 <th>
@@ -252,48 +280,77 @@
                   Date ▾
                 </span>
               </th>
-                <th
-                  className="category-header"
-                  ref={categoryRef}
-                  onClick={() => setShowCategoryFilter(prev => !prev)}
-                >
-                  Category ▾
-                  {showCategoryFilter && (
-                    <div className="category-dropdown">
-                      <input
-                        className="category-search"
-                        placeholder="Search..."
-                        value={categorySearch}
-                        onChange={(e) => setCategorySearch(e.target.value)}
-                      />
-                      {categories
-                        .filter(c =>
-                          c.toLowerCase().includes(categorySearch.toLowerCase())
-                        )
-                        .map(c => (
-                          <div
-                            key={c}
-                            className="dropdown-item"
-                            onClick={() => toggleCategory(c)}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedCategories.includes(c)}
-                              readOnly
-                            />
-                            <span>{c}</span>
-                          </div>
-                        ))}
-                    </div>
-                  )}
+                <th className="category-header" ref={categoryRef}>
+  <span
+    className="category-trigger"
+    onClick={() => setShowCategoryFilter(prev => !prev)}
+  >
+    Category ▾
+  </span>
+                 {showCategoryFilter && (
+  <div
+    className="category-dropdown"
+    onClick={(e) => e.stopPropagation()} // CRITICAL
+  >
+    <input
+      className="category-search"
+      placeholder="Search..."
+      value={categorySearch}
+      onChange={(e) => setCategorySearch(e.target.value)}
+    />
+
+ <div className="dropdown-actions">
+  <label className="dropdown-item select-all">
+    <input
+      type="checkbox"
+      checked={allCategoriesSelected}
+      onChange={(e) =>
+        e.target.checked
+          ? selectAllCategories()
+          : clearAllCategories()
+      }
+    />
+    <p>Select All</p>
+  </label>
+</div>
+
+
+    {categories
+      .filter(c =>
+        c.toLowerCase().includes(categorySearch.toLowerCase())
+      )
+      .map(c => (
+        <div
+          key={c}
+          className="dropdown-item"
+          onClick={() => toggleCategory(c)}
+        >
+          <input
+            type="checkbox"
+            checked={selectedCategories.includes(c)}
+            readOnly
+          />
+          <span>{c}</span>
+        </div>
+      ))}
+  </div>
+)}
+
                 </th>
 
                 <th>Description</th>
               </tr>
             </thead>
 
-            <tbody>
-              {filteredExpenses.map(e => (
+           <tbody>
+            {filteredExpenses.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="no-rows-cell">
+                  No expenses found
+                </td>
+              </tr>
+            ) : (
+              filteredExpenses.map(e => (
                 <tr key={e._id}>
                   <td>
                     <input
@@ -307,66 +364,74 @@
                   <td>{e.category}</td>
                   <td>{e.description}</td>
                 </tr>
-              ))}
-            </tbody>
+              ))
+            )}
+          </tbody>
+
           </table>
         </div>
 
-        {/* DATE DROPDOWN (PORTAL STYLE) */}
-        {showDateFilter && (
-          <div
-            ref={dateDropdownRef}
-            className="date-dropdown-portal"
-            style={{
-              top: dateDropdownPos.top,
-              left: dateDropdownPos.left
-            }}
-          >
-            {Object.keys(dateTree).map(year => (
-              <div key={year}>
-                <div className="tree-item" onClick={() => toggleExpand(year)}>
-                  ▸ {year}
-                </div>
+       {showDateFilter && (
+  <div
+    ref={dateDropdownRef}
+    className="date-dropdown-portal"
+    style={{
+      top: dateDropdownPos.top,
+      left: dateDropdownPos.left
+    }}
+    onClick={(e) => e.stopPropagation()}
+  >
+    <div className="date-filter-calendar">
+      <label>
+        From
+        <input
+          type="date"
+          value={draftFromDate}
+          onChange={(e) => setDraftFromDate(e.target.value)}
+        />
+      </label>
 
-                {expanded[year] &&
-                  Object.keys(dateTree[year]).map(month => {
-                    const key = `${year}-${month}`;
-                    return (
-                      <div key={key} className="tree-children">
-                        <div
-                          className="tree-item"
-                          onClick={() => toggleExpand(key)}
-                        >
-                          ▸ {month}
-                        </div>
+      <label>
+        To
+        <input
+          type="date"
+          value={draftToDate}
+          onChange={(e) => setDraftToDate(e.target.value)}
+        />
+      </label>
 
-                        {expanded[key] &&
-                          dateTree[year][month].map(day => {
-                            const m =
-                              new Date(`${month} 1`).getMonth() + 1;
-                            const dateStr = `${year}-${String(m).padStart(
-                              2,
-                              "0"
-                            )}-${String(day).padStart(2, "0")}`;
+     <div className="date-filter-actions">
+  <button
+    type="button"
+    className="clear-btn"
+    onClick={() => {
+      setDraftFromDate("");
+      setDraftToDate("");
+      setFromDate("");
+      setToDate("");
+      setShowDateFilter(false);
+    }}
+  >
+    Clear
+  </button>
 
-                            return (
-                              <div key={dateStr} className="tree-leaf">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedDates.includes(dateStr)}
-                                  onChange={() => toggleDate(dateStr)}
-                                />
-                                {day}
-                              </div>
-                            );
-                          })}
-                      </div>
-                    );
-                  })}
-              </div>
-            ))}
-          </div>
-        )}
+  <button
+    type="button"
+    className="ok-btn"
+    onClick={() => {
+      setFromDate(draftFromDate);
+      setToDate(draftToDate);
+      setShowDateFilter(false);
+    }}
+  >
+    OK
+  </button>
+</div>
+
+    </div>
+  </div>
+)}
+
 
         {showDeletePopup && (
           <div className="popup-overlay">
