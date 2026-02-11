@@ -19,6 +19,7 @@ const [newPassword, setNewPassword] = useState("");
 const [sendingOtp, setSendingOtp] = useState(false);
 const [infoMessage, setInfoMessage] = useState("");
 const [showToast, setShowToast] = useState(false);
+
 const [shake, setShake] = useState(false);
 
   const navigate = useNavigate();

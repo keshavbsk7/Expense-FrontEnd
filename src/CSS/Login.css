@@ -286,3 +286,34 @@ input[type="password"]::-ms-clear {
     transform: rotate(360deg);
   }
 }
+.progress-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #2ecc71;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
+  width: 320px;
+  overflow: hidden;
+}
+
+.toast-content p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.toast-progress {
+  height: 4px;
+  background: white;
+  margin-top: 8px;
+  animation: toastProgress 4s linear forwards;
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
