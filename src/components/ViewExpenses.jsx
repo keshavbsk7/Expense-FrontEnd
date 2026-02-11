@@ -13,10 +13,11 @@
     const [showCategoryFilter, setShowCategoryFilter] = useState(false);
     const [categorySearch, setCategorySearch] = useState("");
     const [selectedCategories, setSelectedCategories] = useState([]);
+const [loading, setLoading] = useState(true);
 
     /* DATE FILTER */
     const [showDateFilter, setShowDateFilter] = useState(false);
-    const [dateTree, setDateTree] = useState({});
+ 
     const [expanded, setExpanded] = useState({});
     const [selectedDates, setSelectedDates] = useState([]);
     const [dateDropdownPos, setDateDropdownPos] = useState({ top: 0, left: 0 });
@@ -43,14 +44,24 @@
     /* ===============================
       FETCH EXPENSES
     ================================ */
-    const fetchExpenses = async () => {
-      const res = await fetch(
-        `https://expense-backend-rxqo.onrender.com/expenses/${userId}`
-      );
-      const data = await res.json();
-      setExpenses(data);
-      setFilteredExpenses(data);
-    };
+   const fetchExpenses = async () => {
+  try {
+    setLoading(true);
+
+    const res = await fetch(
+      `https://expense-backend-rxqo.onrender.com/expenses/${userId}`
+    );
+
+    const data = await res.json();
+    setExpenses(data);
+    setFilteredExpenses(data);
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
     useEffect(() => {
       fetchExpenses();
@@ -59,27 +70,27 @@
     /* ===============================
       BUILD DATE TREE
     ================================ */
-    useEffect(() => {
-      const tree = {};
-      expenses.forEach(exp => {
-        const d = new Date(exp.date);
-        const year = d.getFullYear();
-        const month = d.toLocaleString("default", { month: "long" });
-        const day = d.getDate();
+    // useEffect(() => {
+    //   const tree = {};
+    //   expenses.forEach(exp => {
+    //     const d = new Date(exp.date);
+    //     const year = d.getFullYear();
+    //     const month = d.toLocaleString("default", { month: "long" });
+    //     const day = d.getDate();
 
-        if (!tree[year]) tree[year] = {};
-        if (!tree[year][month]) tree[year][month] = new Set();
-        tree[year][month].add(day);
-      });
+    //     if (!tree[year]) tree[year] = {};
+    //     if (!tree[year][month]) tree[year][month] = new Set();
+    //     tree[year][month].add(day);
+    //   });
 
-      Object.keys(tree).forEach(y =>
-        Object.keys(tree[y]).forEach(m =>
-          tree[y][m] = [...tree[y][m]].sort((a, b) => a - b)
-        )
-      );
+    //   Object.keys(tree).forEach(y =>
+    //     Object.keys(tree[y]).forEach(m =>
+    //       tree[y][m] = [...tree[y][m]].sort((a, b) => a - b)
+    //     )
+    //   );
 
-      setDateTree(tree);
-    }, [expenses]);
+    //   setDateTree(tree);
+    // }, [expenses]);
 
     /* ===============================
       OUTSIDE CLICK HANDLER
@@ -226,6 +237,43 @@ const allCategoriesSelected =
 
     setShowDateFilter(prev => !prev);
   };
+if (loading) {
+  return (
+    <div className="container">
+
+      <div className="header-row">
+        <div className="skeleton skeleton-title"></div>
+      </div>
+
+      <div className="table-wrapper">
+        <table className="expense-table">
+          <thead>
+            <tr>
+              <th><div className="skeleton skeleton-checkbox"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {[...Array(6)].map((_, i) => (
+              <tr key={i}>
+                <td><div className="skeleton skeleton-checkbox"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  );
+}
 
 
     /* ===============================

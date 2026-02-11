@@ -164,7 +164,57 @@ const [availableBalance, setAvailableBalance] = useState(0);
     loadAll();
   }, [userId]);
 
-  if (loading) return <h2 style={{ textAlign: "center" }}>Loading Dashboard...</h2>;
+  if (loading) {
+  return (
+    <div style={{ padding: "25px 40px" }}>
+
+      {/* Greeting Skeleton */}
+      <div className="greeting-card skeleton-card">
+        <div className="skeleton skeleton-text-lg"></div>
+        <div className="skeleton skeleton-text"></div>
+        <div className="skeleton skeleton-text-sm"></div>
+      </div>
+
+      {/* Summary Skeleton */}
+      <div className="summary-row">
+        {[1,2,3].map((i) => (
+          <div key={i} className="summary-card skeleton-card">
+            <div className="skeleton skeleton-icon"></div>
+            <div style={{ flex: 1 }}>
+              <div className="skeleton skeleton-text-sm"></div>
+              <div className="skeleton skeleton-text-lg"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Insights Skeleton */}
+      <div className="dashboard-card skeleton-card">
+        <div className="skeleton skeleton-text-lg"></div>
+        <div className="skeleton skeleton-text"></div>
+        <div className="skeleton skeleton-text"></div>
+      </div>
+
+      {/* Charts Skeleton */}
+      <div className="dashboard-row">
+        <div className="dashboard-col dashboard-card skeleton-card">
+          <div className="skeleton skeleton-chart"></div>
+        </div>
+
+        <div className="dashboard-col dashboard-card skeleton-card">
+          <div className="skeleton skeleton-chart"></div>
+        </div>
+      </div>
+
+      {/* Line Chart Skeleton */}
+      <div className="dashboard-card skeleton-card">
+        <div className="skeleton skeleton-chart-lg"></div>
+      </div>
+
+    </div>
+  );
+}
+
 
   // Summary card values
   const totalThisMonth = monthlyTrend.length

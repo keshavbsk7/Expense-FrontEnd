@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Cropper from "react-easy-crop";
+import getCroppedImg from "../utils/cropImage";
 import "../CSS/Profile.css";
+import { FaTimes, FaMinusCircle, FaPlusCircle } from "react-icons/fa";
 
 function Profile() {
   const userId = localStorage.getItem("userId");
@@ -15,7 +18,12 @@ function Profile() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  // Load profile details
+  // Crop States
+  const [cropImage, setCropImage] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -24,8 +32,8 @@ function Profile() {
         );
         const data = await res.json();
         setProfile(data);
-      } catch (err) {
-        console.error("Failed to load profile", err);
+      } catch {
+        console.log("Load failed");
       } finally {
         setLoading(false);
       }
@@ -41,14 +49,27 @@ function Profile() {
     }));
   };
 
-  // Upload profile image
-  const uploadProfileImage = async (file) => {
+  const onCropComplete = useCallback((_, croppedPixels) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
+
+  // When user selects image
+  const handleFileSelect = (file) => {
     if (!file) return;
+    setCropImage(URL.createObjectURL(file));
+  };
 
-    const formData = new FormData();
-    formData.append("image", file);
-
+  // Upload Cropped Image
+  const uploadCroppedImage = async () => {
     try {
+      const croppedBlob = await getCroppedImg(
+        cropImage,
+        croppedAreaPixels
+      );
+
+      const formData = new FormData();
+      formData.append("image", croppedBlob, "profile.jpg");
+
       setUploading(true);
 
       const res = await fetch(
@@ -60,25 +81,25 @@ function Profile() {
       );
 
       const data = await res.json();
-      if (!res.ok) throw new Error("Upload failed");
 
       setProfile(prev => ({
         ...prev,
         profileImage: data.imageUrl
       }));
-    } catch (err) {
-      alert("Image upload failed");
+
+      setCropImage(null);
+    } catch {
+      alert("Upload failed");
     } finally {
       setUploading(false);
     }
   };
 
-  // Save profile details
   const saveProfile = async () => {
     try {
       setSaving(true);
 
-      const res = await fetch(
+      await fetch(
         `https://expense-backend-rxqo.onrender.com/user/${userId}`,
         {
           method: "PUT",
@@ -87,82 +108,138 @@ function Profile() {
         }
       );
 
-      if (!res.ok) throw new Error("Save failed");
-
-      alert("Profile updated successfully");
-    } catch (err) {
-      alert("Failed to update profile");
+      alert("Profile updated");
+    } catch {
+      alert("Save failed");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return <h3 style={{ textAlign: "center" }}>Loading profile...</h3>;
-  }
+if (loading) {
+  return (
+    <div className="profile-page">
+      <div className="profile-card">
+        <div className="skeleton skeleton-title"></div>
+
+        <div className="profile-image">
+          <div className="skeleton skeleton-avatar"></div>
+        </div>
+
+        <div className="skeleton skeleton-input"></div>
+        <div className="skeleton skeleton-input"></div>
+        <div className="skeleton skeleton-input"></div>
+
+        <div className="skeleton skeleton-button"></div>
+      </div>
+    </div>
+  );
+}
+
+
 
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <h2 className="profile-title">My Profile</h2>
+        <h2>My Profile</h2>
 
         {/* Profile Image */}
         <div className="profile-image">
           <img
             src={
               profile.profileImage ||
-              "https://ui-avatars.com/api/?name=" +
-                encodeURIComponent(profile.name || "User")
+              `https://ui-avatars.com/api/?name=${profile.name}`
             }
             alt="Profile"
           />
 
           <label className="upload-btn">
-            {uploading ? "Uploading..." : "Change Photo"}
+            Change Photo
             <input
               type="file"
               accept="image/*"
               hidden
-              onChange={(e) => uploadProfileImage(e.target.files[0])}
+              onChange={(e) => handleFileSelect(e.target.files[0])}
             />
           </label>
         </div>
 
-        {/* Name */}
-        <div className="field">
-          <label>Name</label>
-          <input
-            name="name"
-            value={profile.name}
-            onChange={handleChange}
-          />
-        </div>
+        {/* Crop Modal */}
+       {cropImage && (
+  <div className="premium-modal">
 
-        {/* Username */}
-        <div className="field">
-          <label>Username</label>
-          <input
-            name="username"
-            value={profile.username}
-            onChange={handleChange}
-          />
-        </div>
+    <div className="premium-card">
 
-        {/* Email */}
-        <div className="field">
-          <label>Email</label>
-          <input
-            name="email"
-            value={profile.email}
-            onChange={handleChange}
-          />
-        </div>
+      {/* Header */}
+      <div className="premium-header">
+        <h3>Upload Image</h3>
+        <button
+          className="icon-btn"
+          onClick={() => setCropImage(null)}
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Crop Area */}
+      <div className="crop-area-only">
+        <Cropper
+          image={cropImage}
+          crop={crop}
+          zoom={zoom}
+          aspect={1}
+          cropShape="round"
+          showGrid={false}
+          onCropChange={setCrop}
+          onZoomChange={setZoom}
+          onCropComplete={onCropComplete}
+        />
+      </div>
+
+      {/* Zoom Slider */}
+      <div className="premium-slider">
+        <span>-</span>
+        <input
+          type="range"
+          min={1}
+          max={3}
+          step={0.1}
+          value={zoom}
+          onChange={(e) => setZoom(e.target.value)}
+        />
+        <span>+</span>
+      </div>
+
+      {/* Footer */}
+      <div className="premium-footer">
+        <button
+          className="btn-secondary"
+          onClick={() => setCropImage(null)}
+        >
+          Cancel
+        </button>
 
         <button
-          className="primary-btn"
-          onClick={saveProfile}
-          disabled={saving}
+          className="btn-primary"
+          onClick={uploadCroppedImage}
         >
+          {uploading ? "Saving..." : "Save"}
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+
+
+        {/* Fields */}
+        <input name="name" value={profile.name} onChange={handleChange} />
+        <input name="username" value={profile.username} onChange={handleChange} />
+        <input name="email" value={profile.email} onChange={handleChange} />
+
+        <button onClick={saveProfile} disabled={saving}>
           {saving ? "Saving..." : "Save Changes"}
         </button>
       </div>

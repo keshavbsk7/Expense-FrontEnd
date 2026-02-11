@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect  } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 
 import "../CSS/Login.css";
@@ -19,7 +19,10 @@ const [newPassword, setNewPassword] = useState("");
 const [sendingOtp, setSendingOtp] = useState(false);
 const [infoMessage, setInfoMessage] = useState("");
 const [showToast, setShowToast] = useState(false);
-
+const [otpError, setOtpError] = useState("");
+const [otpTimer, setOtpTimer] = useState(60); // 60 second
+const [verifyDisabled, setVerifyDisabled] = useState(false);
+const [otpResetTrigger, setOtpResetTrigger] = useState(0);
 const [shake, setShake] = useState(false);
 
   const navigate = useNavigate();
@@ -33,6 +36,26 @@ const handleChange = (e) => {
   
 
 };
+useEffect(() => {
+  if (mode === "OTP") {
+    setOtpTimer(60);
+    setVerifyDisabled(false);
+
+    const interval = setInterval(() => {
+      setOtpTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setVerifyDisabled(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }
+}, [mode, otpResetTrigger]);
+
 
   if (localStorage.getItem("userId")) {
     return <Navigate to="/home" replace />;
@@ -154,11 +177,12 @@ const handleForgotPassword = async () => {
 
 const handleVerifyOtp = async () => {
   if (!otp) {
-    alert("Please enter OTP");
+    setOtpError("Please enter OTP");
     return;
   }
 
   try {
+    setOtpError("");
     const res = await fetch("https://expense-backend-rxqo.onrender.com/verify-reset-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -170,10 +194,13 @@ const handleVerifyOtp = async () => {
     if (res.ok) {
       setMode("RESET");
     } else {
-      alert(data.message || "Invalid OTP");
+      setShake(true);
+    setTimeout(() => setShake(false), 400);
+      setOtpError(data.message || "Invalid OTP");
+      setOtp("");
     }
   } catch {
-    alert("OTP verification failed");
+    setOtpError("OTP verification failed. Please try again.");
   }
 };
 const handleResetPassword = async () => {
@@ -208,6 +235,37 @@ const handleResetPassword = async () => {
     }
   } catch {
     setInfoMessage("Server error while resetting password");
+  }
+};
+
+const handleResendOtp = async () => {
+  try {
+    setSendingOtp(true);
+    setOtp("");
+    setOtpError("");
+
+    const res = await fetch("https://expense-backend-rxqo.onrender.com/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok) {
+      setInfoMessage("OTP has been resent to your email.");
+      setShowToast(true);
+      setVerifyDisabled(false);
+      setOtpResetTrigger(prev => prev + 1); // Reset OTP timer
+      setTimeout(() => {
+        setShowToast(false);
+      }, 4000);
+    } else {
+      setOtpError("Unable to resend OTP. Try again.");
+    }
+
+  } catch {
+    setOtpError("Something went wrong while resending OTP.");
+  } finally {
+    setSendingOtp(false);
   }
 };
 
@@ -367,25 +425,53 @@ const handleResetPassword = async () => {
               </div>
             </>
           )}
-          {mode === "OTP" && (
-  <>
-    <h2>Verify OTP</h2>
-    <p className="subtitle">Enter the OTP sent to your email</p>
+         {mode === "OTP" && (
+            <>
+              <h2>Verify OTP</h2>
+              <p className="subtitle">Enter the OTP sent to your email</p>
 
-    <div className="input-group">
-      <input
-        type="text"
-        placeholder="Enter OTP"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-      />
-    </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => {
+                    setOtp(e.target.value);
+                    if (otpError) setOtpError("");
+                  }}
+                  className={otpError ? "input-error" : ""}
+                />
+              </div>
 
-    <button className="login-btn" onClick={handleVerifyOtp}>
-      Verify OTP
-    </button>
-  </>
-)}
+              {otpError && (
+                <div className="error-message">{otpError}</div>
+              )}
+
+             <button
+              className="login-btn"
+              onClick={handleVerifyOtp}
+              disabled={verifyDisabled || sendingOtp}
+            >
+              {sendingOtp
+                ? "Sending OTP..."
+                : verifyDisabled
+                ? "OTP Expired"
+                : "Verify OTP"}
+            </button>
+
+              <div style={{ marginTop: "10px", fontSize: "13px", textAlign: "center" }}>
+                {otpTimer > 0 ? (
+                  <span>Expires in {otpTimer}s</span>
+                ) : (
+                  <span style={{ color: "#007bff", cursor: "pointer" }} onClick={handleResendOtp}>
+                    Resend OTP
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+
+
 {mode === "RESET" && (
   <>
     <h2>Set New Password</h2>
