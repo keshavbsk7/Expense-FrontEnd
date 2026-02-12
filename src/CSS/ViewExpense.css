@@ -672,3 +672,375 @@ cursor: pointer;}
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+/* DELETE FAB */
+
+.delete-expense-fab {
+  width: 45px;
+  height: 45px;
+  background: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: 0.3s ease;
+}
+
+.delete-expense-fab:hover {
+  transform: scale(1.08);
+  background: #e53935;
+}
+
+
+.delete-expense-fab:hover {
+  transform: scale(1.08);
+  background: #e53935;
+}
+
+/* Tooltip same style as add */
+.delete-expense-fab .fab-tooltip {
+  position: absolute;
+  right: 65px;
+  background: #333;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+}
+
+.delete-expense-fab:hover .fab-tooltip {
+  opacity: 1;
+}
+.delete-expense-fab {
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+/* group container */
+.fab-group {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Remove fixed positioning */
+.add-expense-fab,
+.delete-expense-fab {
+  position: relative;
+}
+/* Container controls position */
+.fab-container {
+   position: fixed;
+  bottom: 30px;
+  right: 30px;
+
+  display: flex;
+  flex-direction: row;   /* IMPORTANT */
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+
+  z-index: 999;
+}
+.add-expense-fab {
+  width: 55px;
+  height: 55px;
+  background: #4c8bf5;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: 0.25s ease;
+}
+
+.delete-expense-fab {
+  width: 55px;
+  height: 55px;
+  background: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: 0.25s ease;
+}
+
+
+/* Hidden state */
+.delete-expense-fab.hide {
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+  width: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Visible state */
+.delete-expense-fab.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fab-container > div {
+  transition: all 0.3s ease;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fab-top-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+
+
+.add-expense-fab,
+.delete-expense-fab {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+.add-expense-fab {
+  background: #4c8bf5;
+  color: white;
+}
+.delete-expense-fab {
+  background: #ff4d4f;
+  color: white;
+}
+.fab-tooltip {
+  position: absolute;
+  right: 65px;
+  background: #1f2937;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  opacity: 0;
+  transform: translateX(10px);
+  transition: 0.25s ease;
+}
+.add-expense-fab:hover .fab-tooltip,
+.delete-expense-fab:hover .fab-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+.add-expense-fab:hover + .delete-expense-fab {
+  transform: translateX(-90px);
+}
+.add-expense-fab:hover .fab-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+.delete-expense-fab:hover {
+  transform: translateX(-10px);
+}
+.fab-top-group:has(.add-expense-fab:hover) .delete-expense-fab {
+  transform: translateX(-145px);
+}
+.download-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  background-color: #28a745; /* Green color */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+
+.download-fab:hover {
+  transform: scale(1.1);
+  background-color: #218838;
+}
+
+.download-fab .fab-tooltip {
+  position: absolute;
+  right: 70px;
+  background-color: #333;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.download-fab:hover .fab-tooltip {
+  opacity: 1;
+}
+/* Pagination Container */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+  color: #555;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Rows Per Page Dropdown */
+.rows-per-page {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rows-per-page select {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  background-color: #f9f9f9;
+}
+
+/* Page Navigation Buttons */
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.page-info {
+  font-weight: 500;
+}
+
+.page-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.page-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+  color: #aaa;
+}
+/* 1. The White Card Container */
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  
+  /* --- KEY CHANGE HERE --- */
+  /* We calculate 100% of screen height minus approx 220px 
+     (for the blue navbar, title header, and margins) */
+  height: calc(100vh - 220px); 
+  
+  overflow: hidden; 
+  margin-top: 10px;
+  position: relative;
+}
+
+/* 2. The Table Area (Scrolls internally) */
+.table-scroll-area {
+  flex-grow: 1; /* Takes all available space in the card */
+  overflow-y: auto; /* Adds scrollbar only to this part */
+  padding: 0;
+}
+
+/* 3. The Pagination Bar (Sticks to bottom of card) */
+.pagination-bar {
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  padding: 12px 20px;
+  
+  /* Layout */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* Prevents it from shrinking */
+  z-index: 10;
+}
+
+/* Optional: Pagination Styles (to make it look nice) */
+.pagination-bar .rows-per-page {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.pagination-bar .page-nav button {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  margin-left: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-bar .page-nav button:hover:not(:disabled) {
+  background: #f0f0f0;
+  border-color: #bbb;
+}
+
+.pagination-bar .page-nav button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  background: #fafafa;
+}
