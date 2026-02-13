@@ -1,5 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import "../App.css";
+import { NavLink, useNavigate } from "react-router-dom";
+
+//import "../App.css";
+
+import "../CSS/Navbar.css";
 import { useEffect, useState } from "react";
 import LogoutModal from "./LogoutModal";
 
@@ -13,6 +16,9 @@ function Navbar() {
 
   const openLogoutModal = () => setShowLogoutModal(true);
   const closeLogoutModal = () => setShowLogoutModal(false);
+const [showDropdown, setShowDropdown] = useState(false);
+const [showNavbar, setShowNavbar] = useState(true);
+const [lastScrollY, setLastScrollY] = useState(window.scrollY);
 
   const handleLogout = () => {
     setShowLogoutModal(false);
@@ -21,6 +27,32 @@ function Navbar() {
     window.dispatchEvent(new Event("storage"));
     navigate("/");
   };
+  useEffect(() => {
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY && currentScrollY > 80) {
+      // scrolling DOWN
+      setShowNavbar(false);
+    } else {
+      // scrolling UP
+      setShowNavbar(true);
+    }
+
+    setLastScrollY(currentScrollY);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [lastScrollY]);
+
+useEffect(() => {
+  const handleClick = () => setShowDropdown(false);
+  window.addEventListener("click", handleClick);
+
+  return () => window.removeEventListener("click", handleClick);
+}, []);
 
   // Load profile image
   useEffect(() => {
@@ -38,42 +70,71 @@ function Navbar() {
 
   return (
     <>
-      <nav className="navbar">
-        <h3 className="logo">Expense Tracker</h3>
+      <nav className={`premium-navbar ${showNavbar ? "nav-visible" : "nav-hidden"}`}>
+        <h3
+  className="logo"
+  onClick={() => navigate("/home")}
+  style={{ cursor: "pointer" }}
+>
+  Expense Tracker
+</h3>
+
 
         <ul className="nav-links">
-          <li>
-            <Link to="/home" className="nav-item-btn">Home</Link>
-          </li>
+          <NavLink to="/home" className="nav-item-btn">
+  Home
+</NavLink>
+
 
           <li>
-            <Link to="/view-expenses" className="nav-item-btn">
+            <NavLink to="/view-expenses" className="nav-item-btn">
               View Expense Details
-            </Link>
+            </NavLink>
           </li>
 
-          <li>
-            <button className="logout-btn" onClick={openLogoutModal}>
-              Logout
-            </button>
-          </li>
+          <li className="profile-wrapper">
+  <div
+    className="nav-profile-avatar"
+    onClick={(e) => {
+      e.stopPropagation();
+      setShowDropdown(!showDropdown);
+    }}
+  >
+    <img
+      src={
+        profileImage ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(username || "User")}`
+      }
+      alt="Profile"
+    />
+  </div>
 
-          {/* PROFILE AVATAR */}
-          <li>
-            <div
-              className="nav-profile-avatar"
-              onClick={() => navigate("/profile")}
-              title="Profile"
-            >
-              <img
-                src={
-                  profileImage ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(username || "User")}`
-                }
-                alt="Profile"
-              />
-            </div>
-          </li>
+  {showDropdown && (
+    <div className="profile-dropdown">
+      <div
+        className="dropdown-item"
+        onClick={() => {
+          setShowDropdown(false);
+          navigate("/profile");
+        }}
+      >
+        👤 My Profile
+      </div>
+
+      <div
+        className="dropdown-item logout"
+        onClick={() => {
+          setShowDropdown(false);
+          openLogoutModal();
+        }}
+      >
+        🚪 Logout
+      </div>
+    </div>
+  )}
+</li>
+
+
         </ul>
       </nav>
 

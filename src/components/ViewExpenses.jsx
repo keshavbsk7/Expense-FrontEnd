@@ -335,6 +335,43 @@ const allCategoriesSelected =
     XLSX.writeFile(workbook, fileName);
   };
 
+if (loading) {
+  return (
+    <div className="container">
+
+      <div className="header-row">
+        <div className="skeleton skeleton-title"></div>
+      </div>
+
+      <div className="table-wrapper">
+        <table className="expense-table">
+          <thead>
+            <tr>
+              <th><div className="skeleton skeleton-checkbox"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+              <th><div className="skeleton skeleton-th"></div></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {[...Array(6)].map((_, i) => (
+              <tr key={i}>
+                <td><div className="skeleton skeleton-checkbox"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+                <td><div className="skeleton skeleton-td"></div></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  );
+}
 
     /* ===============================
       RENDER

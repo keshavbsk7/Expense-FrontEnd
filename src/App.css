@@ -828,3 +828,37 @@ select:focus {
     background-position: 200% 0;
   }
 }
+.profile-wrapper {
+  position: relative;
+}
+
+/* Dropdown box */
+.profile-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 160px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 999;
+}
+
+/* Items */
+.dropdown-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: black;
+}
+
+.dropdown-item:hover {
+  background: #f2f2f2;
+}
+
+/* Logout color */
+.dropdown-item.logout {
+  color: #e53935;
+}
