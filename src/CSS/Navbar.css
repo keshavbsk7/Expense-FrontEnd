@@ -135,3 +135,45 @@
   transform: translateY(-120%);
   opacity: 0;
 }
+/* Wrapper for list items to allow absolute positioning of the mascot */
+.nav-item-wrapper {
+  position: relative; /* CRITICAL: This acts as the anchor point */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container for the mascot to position it above the text */
+.mascot-container {
+  position: absolute;
+  /* CHANGE THIS: 
+     -35px was too high. 
+     Try -10px, 0px, or 5px. 
+     Increase the number to move the character DOWN. */
+  top: -20px; 
+  
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
+  width: 50px; /* You can make this 60px if you want it bigger */
+}
+/* The actual image styling */
+.mascot-img {
+  width: 40px; /* Size of your character */
+  height: auto;
+  animation: landOnTab 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Animation Keyframes: Makes it look like it's jumping onto the text */
+@keyframes landOnTab {
+  0% {
+    transform: translateY(-20px) scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
