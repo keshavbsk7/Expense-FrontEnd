@@ -354,7 +354,7 @@ const handleResendOtp = async () => {
                 <div style={{ textAlign: "right", marginBottom: "10px" }}>
                   <span
                     style={{
-                      color: "#007bff",
+                      color: "#2904fa",
                       cursor: "pointer",
                       fontSize: "13px",
                     }}

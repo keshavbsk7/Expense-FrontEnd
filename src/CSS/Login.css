@@ -3,10 +3,12 @@
    =============================== */
 
 .login-container {
-  display: flex;
   min-height: 100vh;
-  width: 100%;
-  background: #f9fbff;
+  display: flex;
+
+  background: radial-gradient(circle at 50% 0%, #7ecbd8, #1f3fa3);
+  color: white;
+
 }
 
 /* Hide illustration on mobile */
@@ -22,17 +24,21 @@
   justify-content: center;
   padding: 20px;
 }
-
+.login-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(99,102,241,0.15), transparent 60%);
+  pointer-events: none;
+}
 /* LOGIN CARD */
 .login-box {
-  width: 100%;
-  max-width: 380px;
-  padding: 32px 28px;
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.10);
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
+   background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+ width:800px;
+ border-radius: 10px;
 }
 
 .login-box h2 {
@@ -44,7 +50,7 @@
 
 .subtitle {
   font-size: 14px;
-  color: #6b6b6b;
+  color: #030303;
   margin-bottom: 22px;
 }
 
@@ -54,20 +60,19 @@
 }
 
 .input-group input {
-  width: 100%;
-  padding: 14px;
-  padding-right: 45px;
-  border-radius: 10px;
-  border: 1px solid #d1d9e6;
-  background: #f8f9fc;
-  font-size: 15px;
-  outline: none;
-  transition: 0.3s;
+  background: rgba(255,255,255,0.08);
+  color: rgb(15, 15, 15);
+  border: 1px solid rgba(255,255,255,0.15);
 }
+
+.input-group input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
 
 .input-group input:focus {
   border-color: #4a90e2;
-  background: #fff;
+  background: #b2dfe7;
   box-shadow: 0 0 5px rgba(74,144,226,0.4);
 }
 
@@ -122,7 +127,7 @@
   padding: 14px;
   font-size: 16px;
   font-weight: 600;
-  background: linear-gradient(135deg, #4a90e2, #3a7bd5);
+  background: linear-gradient(135deg, #2878d4, #3a7bd5);
   color: white;
   border-radius: 10px;
   border: none;
@@ -138,11 +143,11 @@
 .register {
   margin-top: 18px;
   font-size: 14px;
-  color: #444;
+  color: #050505;
 }
 
 .register span {
-  color: #4a90e2;
+  color: #2904fa;
   font-weight: 600;
   cursor: pointer;
 }
@@ -163,7 +168,7 @@
     display: block;
     flex: 1.2;
     position: relative;
-    background: linear-gradient(135deg, #0f9bb3, #1f3fa3);
+    background: linear-gradient(135deg, #85d3e0, #1f3fa3);
     overflow: hidden;
   }
 

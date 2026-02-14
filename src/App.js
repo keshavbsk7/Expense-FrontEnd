@@ -8,6 +8,7 @@ import ViewExpenses from "./components/ViewExpenses";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
+import Landing from "./components/Landing";
 
 function App() {
 
@@ -25,7 +26,8 @@ function App() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const hideNavbarRoutes = ["/", "/register"];
+const hideNavbarRoutes = ["/", "/login", "/register"];
+
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -33,7 +35,13 @@ function App() {
       {isLoggedIn && !shouldHideNavbar && <Navbar />}
 
       <Routes>
+          <Route
+    path="/"
+    element={isLoggedIn ? <Navigate to="/home" /> : <Landing />}
+  />
         <Route path="/" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+
 
         <Route path="/register" element={<Register />} />
 
